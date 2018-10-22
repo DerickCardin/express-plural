@@ -6,9 +6,21 @@ app.use(logger);
 
 app.use(express.static('public'));
 
-app.get('/blocks', function(request, response) {
-    var blocks = ['Fixed', 'Movable', 'Rotating'];
-    response.json(blocks);
-});
 
+var blocks ={
+    'Fixed': 'Fastened securely in position',
+    'Movable': 'Capable of being moved',
+    'Rotating': 'Moving in a cirlce around its center'
+};
+
+app.get('/blocks/:name', function(request, response) {
+    var description = blocks[request.params.name];
+    if (!description) {
+        response.status(404).json('No descriptiobn found for ' + request.params.name);
+    } else{
+    
+    response.json(description);
+    }
+});
+        
 app.listen(8080);
