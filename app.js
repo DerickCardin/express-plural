@@ -1,8 +1,8 @@
 var express = require('express');
 var app = express();
 
-var logger = require('./logger');
-app.use(logger);
+var bodyParser = require('body-parser');
+var parseUrlencoded = bodyParser.urlencoded({ extended: false });
 
 app.use(express.static('public'));
 
@@ -12,6 +12,13 @@ var blocks ={
     'Movable': 'Capable of being moved',
     'Rotating': 'Moving in a cirlce around its center'
 };
+
+app.post('/blocks', parseUrlencoded, function(request, response) {
+    var newBlock = request.body;
+    blocks[newBlock.name] = newBlock.description;
+    
+    response.status(201).json(newBlock.name);
+});
 
 var locations = {
     'Fixed': 'First floor',
@@ -31,7 +38,7 @@ app.param('name', function(request, response, next) {
 app.get('/blocks/:name', function(request, response) {
     var description = blocks[request.blockName];
     if (!description) {
-        response.status(404).json('No descriptiobn found for ' + request.params.name);
+        response.status(404).json('No description found for ' + request.params.name);
     } else{
     
     response.json(description);
